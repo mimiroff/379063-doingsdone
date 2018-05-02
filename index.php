@@ -40,6 +40,24 @@ $tasks = [
     'is_done' => false
   ]
 ];
+
+function count_projects($tasks, $project) {
+    $total_counter = 0;
+    $project_counter = 0;
+    foreach ($tasks as $arr) {
+        $total_counter++;
+        foreach ($arr as $key => $value) {
+            if ($key == 'category' && $value == $project) {
+                $project_counter++;
+            }
+        }
+    }
+    if ($project == 'Все') {
+        return $total_counter;
+    } else {
+        return $project_counter;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -93,7 +111,7 @@ $tasks = [
                             $class_name = ($counter == 0) ? 'main-navigation__list-item main-navigation__list-item--active' : 'main-navigation__list-item';?>
                           <li class="<?=$class_name;?>">
                               <a class="main-navigation__list-item-link" href="#"><?=$categories[$counter]?></a>
-                              <span class="main-navigation__list-item-count">24</span>
+                              <span class="main-navigation__list-item-count"><?=count_projects($tasks, $categories[$counter]);?></span>
                           </li>
                         <?php $counter++; } ?>
                     </ul>
