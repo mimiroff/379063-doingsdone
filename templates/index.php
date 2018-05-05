@@ -70,3 +70,5 @@
         </table>
     </main>
 </div>
+</div>
+</div>

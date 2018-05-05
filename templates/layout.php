@@ -37,9 +37,7 @@
             </div>
         </header>
 
-        <main>
-            <?=$content;?>
-        </main>
+        <?=$content;?>
 
         <footer class="main-footer">
             <div class="container">
@@ -80,8 +78,7 @@
                 </div>
             </div>
         </footer>
-    </div>
-</div>
+
         <script src="flatpickr.js"></script>
         <script src="script.js"></script>
 </body>
