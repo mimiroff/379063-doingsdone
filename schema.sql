@@ -14,7 +14,8 @@ CREATE TABLE users (
 CREATE TABLE projects (
   id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   project_name VARCHAR(255) NOT NULL,
-  user_id INT UNSIGNED NOT NULL
+  user_id INT UNSIGNED NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE tasks (
@@ -25,5 +26,13 @@ CREATE TABLE tasks (
   file_path VARCHAR(255),
   deadline DATETIME,
   author_id INT UNSIGNED NOT NULL,
-  project_id INT UNSIGNED NOT NULL
+  project_id INT UNSIGNED NOT NULL,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE UNIQUE INDEX email ON users(email);
+CREATE UNIQUE INDEX project ON projects(project_name);
+CREATE INDEX t_name ON tasks(task_name);
+CREATE INDEX s_date ON tasks(start_date);
+CREATE INDEX d_line ON tasks(deadline);
