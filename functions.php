@@ -31,3 +31,20 @@ function count_projects($tasks, $project) {
         return $project_counter;
     }
 };
+// функция подсчета оставшего времени до наступления срока выполнения задачи. Приминает два аргумента:
+// срок выполнения задачи и рубеж значимости. Если время, оставшееся до наступления срока задачи меньше рубежа значимости
+// функция вернёт true, если больше - false. Если срок выполнения задачи не задан - вернёт false
+function count_deadline ($deadline, $mark) {
+    $deadline_ts = strtotime($deadline);
+    if (is_int($deadline_ts)) {
+        $now = time();
+        $time_delta = $deadline_ts - $now;
+        if ($time_delta < $mark) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+};

@@ -50,8 +50,9 @@
             <?php while ($counter < count($tasks)) {
                 $class_name = $tasks[$counter]['is_done'] ? 'tasks__item task task--completed' : 'tasks__item task';
                 $hidden = ($show_complete_tasks == 0 && $tasks[$counter]['is_done']) ? 'style="display: none;}"' : '';
+                $important = (count_deadline($tasks[$counter]['deadline'], 3600)) ? 'task--important' : '';
                 ?>
-                <tr class="<?=$class_name;?>" <?=$hidden;?>>
+                <tr class="<?=$class_name;?> <?=$important;?>" <?=$hidden;?>>
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
@@ -62,7 +63,6 @@
                     <td class="task__file">
                         <a class="download-link" href="#">Home.psd</a>
                     </td>
-
                     <td class="task__date"><?=htmlspecialchars($tasks[$counter]['deadline']);?></td>
                     <td class="task__controls"></td>
                 </tr>
