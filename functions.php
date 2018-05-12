@@ -1,6 +1,12 @@
 <?php
-// функция - шаблонизатор, принимает параметры путь к файлу шаблона и данные
-function renderTemplate ($template_path, $data) {
+/**
+ * Функция - шаблонизатор
+ *
+ * @param string $template_path путь к файлу шаблона
+ * @param array $data данные
+ * @return string возвращает разметку
+ */
+function renderTemplate (string $template_path, array $data): string {
     if(is_file($template_path)) {
         foreach($data as $key => $value) {
             ${$key} = $value;
@@ -13,28 +19,61 @@ function renderTemplate ($template_path, $data) {
     }
 };
 
-// функция подсчета задач по категориям, принимает параметрами массив задач и категорию
-function count_projects($tasks, $project) {
-    $total_counter = 0;
-    $project_counter = 0;
-    foreach ($tasks as $task_list) {
-        $total_counter++;
-        foreach ($task_list as $category => $project_name) {
-            if ($category == 'category' && $project_name == $project) {
-                $project_counter++;
-            }
-        }
+/**
+ * Возвращает количество задач по id проекта
+ *
+ * @param $link соединение с БД
+ * @param int $project_id номер id проекта
+ * @return int Количество задач
+ */
+function count_tasks_by_project ($link, int $project_id): int {
+    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
     }
-    if ($project == 'Все') {
-        return $total_counter;
-    } else {
-        return $project_counter;
-    }
+
+    $records_count = mysqli_num_rows($result);
+
+    return $records_count;
 };
-// функция подсчета оставшего времени до наступления срока выполнения задачи. Приминает два аргумента:
-// срок выполнения задачи и рубеж значимости. Если время, оставшееся до наступления срока задачи меньше рубежа значимости
-// функция вернёт true, если больше - false. Если срок выполнения задачи не задан - вернёт false
-function count_deadline ($deadline, $mark) {
+
+/**
+ * Возвращает общее количество задач во всех проектах пользователя
+ *
+ * @param $link соединение с БД
+ * @param array $projects массив проектов пользователя
+ * @return int общее количество задач во всех проектах пользователя
+ */
+function count_total_tasks ($link, array $projects): int {
+    $total = 0;
+    foreach ($projects as $project) {
+        $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project['id'] . '"';
+        $result = mysqli_query($link, $sql);
+
+        if(!$result) {
+            $error = mysqli_error($link);
+            print('Ошибка MySQL: ' . $error);
+        }
+
+        $records_count = mysqli_num_rows($result);
+        $total += $records_count;
+    }
+
+    return $total;
+};
+
+/**
+ * функция подсчета оставшего времени до наступления срока выполнения задачи
+ *
+ * @param string $deadline срок выполнения задачи
+ * @param int $mark рубеж значимости
+ * @return bool Если время, оставшееся до наступления срока задачи меньше рубежа значимости
+ * функция вернёт true, если больше - false. Если срок выполнения задачи не задан - вернёт false
+ */
+function count_deadline (string $deadline, int $mark): bool {
     $deadline_ts = strtotime($deadline);
     if (is_int($deadline_ts)) {
         $now = time();
@@ -48,3 +87,59 @@ function count_deadline ($deadline, $mark) {
         return false;
     }
 };
+
+/**
+ * Возвращает массив проектов, созданных определенным пользователем
+ *
+ * @param $link соединение с БД
+ * @param int $user_id номер id пользователя
+ * @return array Возвращает двумерный массив ассоциативных массивов с данными проектов
+ */
+function get_projects_by_user ($link, int $user_id): array {
+    $sql = 'SELECT * FROM `projects` WHERE `user_id` = "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $projects;
+}
+
+/**
+ * Возвращает массив задач, созданных определенным пользователем
+ *
+ * @param $link соединение с БД
+ * @param int $user_id номер id пользователя
+ * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
+ */
+function get_tasks_by_user ($link, int $user_id): array {
+$sql = 'SELECT * FROM `tasks` WHERE `author_id` = "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $tasks;
+};
+
+//function get_tasks_by_project ($link, $project_id) {
+//    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project_id . '"';
+//    $result = mysqli_query($link, $sql);
+//
+//    if(!$result) {
+//        $error = mysqli_error($link);
+//        print('Ошибка MySQL: ' . $error);
+//    }
+//
+//    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+//
+//    return $rows;
+//}

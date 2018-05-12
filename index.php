@@ -3,12 +3,20 @@
 require_once 'functions.php';
 require_once 'data.php';
 
+$link = mysqli_connect('localhost', 'root', '', 'doingsdone-379063');
+
+if(!$link) {
+    print('Ошибка подключения: ' . mysqli_connect_error());
+}
+
+$user = 1;
 $page_content = renderTemplate(
     './templates/index.php',
     [
-        'categories' => $categories,
-        'tasks' => $tasks,
-        'show_complete_tasks' => $show_complete_tasks
+        'projects' => get_projects_by_user($link, $user),
+        'tasks' => get_tasks_by_user($link, $user),
+        'show_complete_tasks' => $show_complete_tasks,
+        'link' => $link
     ]
 );
 
