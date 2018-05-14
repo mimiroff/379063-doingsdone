@@ -9,6 +9,9 @@ if(!$link) {
     print('Ошибка подключения: ' . mysqli_connect_error());
 }
 
+mysqli_set_charset($link, 'utf8');
+
+
 $user = 1;
 $page_content = renderTemplate(
     './templates/index.php',

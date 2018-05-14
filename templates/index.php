@@ -4,17 +4,16 @@
 
         <nav class="main-navigation">
             <ul class="main-navigation__list">
-                <li class="main-navigation__list-item">
+                <li class="main-navigation__list-item  main-navigation__list-item--active">
                     <a class="main-navigation__list-item-link" href="#">Все</a>
                     <span class="main-navigation__list-item-count"><?=count_total_tasks($link, $projects)?></span>
                 </li>
-                <?php foreach($projects as $i => $project) {
-                    $class_name = ($i == 0) ? 'main-navigation__list-item main-navigation__list-item--active' : 'main-navigation__list-item';?>
-                    <li class="<?=$class_name;?>">
+                <?php foreach($projects as $project) : ?>
+                    <li class="main-navigation__list-item">
                         <a class="main-navigation__list-item-link" href="#"><?=$project['project_name']?></a>
                         <span class="main-navigation__list-item-count"><?=count_tasks_by_project($link, $project['id']);?></span>
                     </li>
-                    <?php }; ?>
+                    <?php endforeach; ?>
             </ul>
         </nav>
 
