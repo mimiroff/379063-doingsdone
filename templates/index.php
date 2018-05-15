@@ -3,17 +3,17 @@
         <h2 class="content__side-heading">Проекты</h2>
 
         <nav class="main-navigation">
-            <?php
-            $counter = 0;
-            ?>
             <ul class="main-navigation__list">
-                <?php while ($counter < count($categories)) {
-                    $class_name = ($counter == 0) ? 'main-navigation__list-item main-navigation__list-item--active' : 'main-navigation__list-item';?>
-                    <li class="<?=$class_name;?>">
-                        <a class="main-navigation__list-item-link" href="#"><?=$categories[$counter]?></a>
-                        <span class="main-navigation__list-item-count"><?=count_projects($tasks, $categories[$counter]);?></span>
+                <li class="main-navigation__list-item  main-navigation__list-item--active">
+                    <a class="main-navigation__list-item-link" href="#">Все</a>
+                    <span class="main-navigation__list-item-count"><?=count_total_tasks($link, $projects)?></span>
+                </li>
+                <?php foreach($projects as $project) : ?>
+                    <li class="main-navigation__list-item">
+                        <a class="main-navigation__list-item-link" href="#"><?=$project['project_name']?></a>
+                        <span class="main-navigation__list-item-count"><?=count_tasks_by_project($link, $project['id']);?></span>
                     </li>
-                    <?php $counter++; } ?>
+                    <?php endforeach; ?>
             </ul>
         </nav>
 
@@ -45,28 +45,27 @@
                 <span class="checkbox__text">Показывать выполненные</span>
             </label>
         </div>
-        <?php $counter = 0;?>
         <table class="tasks">
-            <?php while ($counter < count($tasks)) {
-                $class_name = $tasks[$counter]['is_done'] ? 'tasks__item task task--completed' : 'tasks__item task';
-                $hidden = ($show_complete_tasks == 0 && $tasks[$counter]['is_done']) ? 'style="display: none;}"' : '';
-                $important = (count_deadline($tasks[$counter]['deadline'], 3600)) ? 'task--important' : '';
+            <?php foreach ($tasks as $task) {
+                $class_name = $task['end_date'] ? 'tasks__item task task--completed' : 'tasks__item task';
+                $hidden = ($show_complete_tasks == 0 && $task['end_date']) ? 'style="display: none;}"' : '';
+                $important = (count_deadline($task['deadline'], 3600)) ? 'task--important' : '';
                 ?>
                 <tr class="<?=$class_name;?> <?=$important;?>" <?=$hidden;?>>
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                            <span class="checkbox__text"><?=htmlspecialchars($tasks[$counter]['task']);?></span>
+                            <span class="checkbox__text"><?=htmlspecialchars($task['task_name']);?></span>
                         </label>
                     </td>
 
                     <td class="task__file">
                         <a class="download-link" href="#">Home.psd</a>
                     </td>
-                    <td class="task__date"><?=htmlspecialchars($tasks[$counter]['deadline']);?></td>
+                    <td class="task__date"><?=date('d.m.Y', strtotime(htmlspecialchars($task['deadline'])));?></td>
                     <td class="task__controls"></td>
                 </tr>
-                <?php $counter++; } ?>
+                <?php }; ?>
         </table>
     </main>
 </div>
