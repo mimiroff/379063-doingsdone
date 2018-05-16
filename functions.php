@@ -130,16 +130,39 @@ $sql = 'SELECT * FROM `tasks` WHERE `author_id` = "' . $user_id . '"';
     return $tasks;
 };
 
-//function get_tasks_by_project ($link, $project_id) {
-//    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project_id . '"';
-//    $result = mysqli_query($link, $sql);
-//
-//    if(!$result) {
-//        $error = mysqli_error($link);
-//        print('Ошибка MySQL: ' . $error);
-//    }
-//
-//    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
-//
-//    return $rows;
-//}
+/**
+ * @param $link соединение с БД
+ * @param int $project_id номер id проекта
+ * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
+ */
+function get_tasks_by_project ($link, int $project_id): array {
+    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $tasks;
+};
+
+/**
+ * @param $link соединение с БД
+ * @param int $project_id номер id проекта
+ * @param int $user_id номер id пользователя
+ * @return bool возвращает true, если проект найден, возвращает false, если проект не найден
+ */
+function check_project ($link, int $project_id, int $user_id): bool {
+    $sql = 'SELECT * FROM `projects` WHERE `id` = "' . $project_id . '" AND `user_id`= "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    return mysqli_fetch_all($result, MYSQLI_ASSOC) ? true : false;
+};
