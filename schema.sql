@@ -26,7 +26,7 @@ CREATE TABLE `tasks` (
   `file_path` VARCHAR(255),
   `deadline` DATETIME,
   `author_id` INT UNSIGNED NOT NULL,
-  `project_id` INT UNSIGNED NOT NULL,
+  `project_id` INT UNSIGNED,
   FOREIGN KEY (`author_id`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
