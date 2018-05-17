@@ -11,18 +11,20 @@ if(!$link) {
 
 mysqli_set_charset($link, 'utf8');
 
-$user = 1;
+$user_id = 1;
+$user = get_user_data_by_id($link, $user_id);
 
-if (!empty($_GET['id']) && check_project($link, $_GET['id'], $user)) {
+if (!empty($_GET['id']) && check_project($link, $_GET['id'], $user_id)) {
     $project_id = $_GET['id'];
     $page_content = renderTemplate(
         './templates/index.php',
         [
-            'projects' => get_projects_by_user($link, $user),
+            'projects' => get_projects_by_user($link, $user_id),
             'tasks' => get_tasks_by_project($link, $project_id),
             'show_complete_tasks' => $show_complete_tasks,
             'link' => $link,
-            'active' => $project_id
+            'active' => $project_id,
+            'user' => $user
         ]
     );
 } else if (!isset($_GET['id'])) {
@@ -30,11 +32,12 @@ if (!empty($_GET['id']) && check_project($link, $_GET['id'], $user)) {
     $page_content = renderTemplate(
         './templates/index.php',
         [
-            'projects' => get_projects_by_user($link, $user),
-            'tasks' => get_tasks_by_user($link, $user),
+            'projects' => get_projects_by_user($link, $user_id),
+            'tasks' => get_inbox_tasks_by_user($link, $user_id),
             'show_complete_tasks' => $show_complete_tasks,
             'link' => $link,
-            'active' => $project_id
+            'active' => $project_id,
+            'user' => $user
         ]
     );
 } else {
@@ -49,7 +52,7 @@ $layout_content = renderTemplate(
     [
         'title' => 'Дела в порядке',
         'content' => $page_content,
-        'user' => 'Илья'
+        'user' => $user
     ]
 );
 

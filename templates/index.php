@@ -6,8 +6,8 @@
             <ul class="main-navigation__list">
                 <?php $class_name = ($active == 0) ? 'main-navigation__list-item  main-navigation__list-item--active' : 'main-navigation__list-item';?>
                 <li class="<?=$class_name;?>">
-                    <a class="main-navigation__list-item-link" href="index.php">Все</a>
-                    <span class="main-navigation__list-item-count"><?=count_total_tasks($link, $projects)?></span>
+                    <a class="main-navigation__list-item-link" href="index.php">Входящие</a>
+                    <span class="main-navigation__list-item-count"><?=count_inbox_tasks_by_user($link, $user['id'])?></span>
                 </li>
                 <?php foreach($projects as $project) {
                     $class_name = ($active == $project['id']) ? 'main-navigation__list-item  main-navigation__list-item--active' : 'main-navigation__list-item';?>

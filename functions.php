@@ -8,9 +8,7 @@
  */
 function renderTemplate (string $template_path, array $data): string {
     if(is_file($template_path)) {
-        foreach($data as $key => $value) {
-            ${$key} = $value;
-        }
+        extract($data);
         ob_start();
         require_once $template_path;
         return ob_get_clean();
@@ -44,25 +42,22 @@ function count_tasks_by_project ($link, int $project_id): int {
  * Возвращает общее количество задач во всех проектах пользователя
  *
  * @param $link соединение с БД
- * @param array $projects массив проектов пользователя
- * @return int общее количество задач во всех проектах пользователя
+ * @param array $user_id номер id пользователя
+ * @return int общее количество входящих задач пользователя
  */
-function count_total_tasks ($link, array $projects): int {
-    $total = 0;
-    foreach ($projects as $project) {
-        $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project['id'] . '"';
-        $result = mysqli_query($link, $sql);
+function count_inbox_tasks_by_user ($link, int $user_id): int {
 
-        if(!$result) {
-            $error = mysqli_error($link);
-            print('Ошибка MySQL: ' . $error);
-        }
+    $sql = 'SELECT COUNT(*) FROM `tasks` WHERE `author_id` = "' . $user_id . '" AND `project_id` IS NULL';
+    $result = mysqli_query($link, $sql);
 
-        $records_count = mysqli_num_rows($result);
-        $total += $records_count;
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
     }
 
-    return $total;
+    $count = mysqli_fetch_row($result);
+
+    return (int) $count[0];
 };
 
 /**
@@ -110,27 +105,8 @@ function get_projects_by_user ($link, int $user_id): array {
 }
 
 /**
- * Возвращает массив задач, созданных определенным пользователем
+ * Возвращает массив задач в рамках определенного проекта
  *
- * @param $link соединение с БД
- * @param int $user_id номер id пользователя
- * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
- */
-function get_tasks_by_user ($link, int $user_id): array {
-$sql = 'SELECT * FROM `tasks` WHERE `author_id` = "' . $user_id . '"';
-    $result = mysqli_query($link, $sql);
-
-    if(!$result) {
-        $error = mysqli_error($link);
-        print('Ошибка MySQL: ' . $error);
-    }
-
-    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-    return $tasks;
-};
-
-/**
  * @param $link соединение с БД
  * @param int $project_id номер id проекта
  * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
@@ -150,6 +126,29 @@ function get_tasks_by_project ($link, int $project_id): array {
 };
 
 /**
+ * Возвращает массив задач пользователя, не отнесенных к какому-либо проекту
+ *
+ * @param $link соединение с БД
+ * @param int $user_id номер id пользователя
+ * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
+ */
+function get_inbox_tasks_by_user ($link, int $user_id): array {
+    $sql = 'SELECT * FROM `tasks` WHERE `author_id` = "' . $user_id . '" AND `project_id` IS NULL';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $tasks;
+};
+
+/**
+ * Проверяет, есть ли у определенного пользователя соответствующий проект
+ *
  * @param $link соединение с БД
  * @param int $project_id номер id проекта
  * @param int $user_id номер id пользователя
@@ -165,4 +164,26 @@ function check_project ($link, int $project_id, int $user_id): bool {
     }
 
     return mysqli_fetch_all($result, MYSQLI_ASSOC) ? true : false;
+};
+
+/**
+ * Возвращает массив данных пользователя
+ *
+ * @param $link соединение с БД
+ * @param int $user_id номер id пользователя
+ * @return array Возвращает ассоциативный массив с данными пользователя
+ */
+function get_user_data_by_id ($link, int $user_id): array {
+    $sql = 'SELECT * FROM `users` WHERE `id` = "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $user = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $user = $user[0];
+
+    return $user;
 };
