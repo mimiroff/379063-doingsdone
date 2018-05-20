@@ -9,7 +9,8 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body><!--class="overlay"-->
+<?php $class_name = $is_error ? 'overlay' : '';?>
+<body class="<?=$class_name;?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
 <div class="page-wrapper">
@@ -78,7 +79,7 @@
                 </div>
             </div>
         </footer>
-
+        <?=$modal_task;?>
         <script src="flatpickr.js"></script>
         <script src="script.js"></script>
 </body>
