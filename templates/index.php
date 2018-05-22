@@ -51,20 +51,25 @@
             <?php foreach ($tasks as $task) {
                 $class_name = $task['end_date'] ? 'tasks__item task task--completed' : 'tasks__item task';
                 $hidden = ($show_complete_tasks == 0 && $task['end_date']) ? 'style="display: none;}"' : '';
-                $important = (count_deadline($task['deadline'], 3600)) ? 'task--important' : '';
+                $important = ($task['deadline'] == null) ? '' : (count_deadline($task['deadline'], 3600)) ? 'task--important' : '';
                 ?>
                 <tr class="<?=$class_name;?> <?=$important;?>" <?=$hidden;?>>
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
                             <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
-                            <span class="checkbox__text"><?=htmlspecialchars($task['task_name']);?></span>
+                            <span class="checkbox__text"><?=htmlspecialchars(strip_tags($task['task_name']));?></span>
                         </label>
                     </td>
 
                     <td class="task__file">
-                        <a class="download-link" href="#">Home.psd</a>
+                        <?php if ($task['file_path'] == null) :?>
+                        <a class="download-link">Нет</a>
+                        <?php else:?>
+                        <a class="download-link" href="<?=$task['file_path'];?>" download><?=htmlspecialchars($task['file_name']);?></a>
+                        <?php endif;?>
                     </td>
-                    <td class="task__date"><?=date('d.m.Y', strtotime(htmlspecialchars($task['deadline'])));?></td>
+                    <?php $date = ($task['deadline'] == null) ? 'Нет' : date('d.m.Y', strtotime(htmlspecialchars($task['deadline'])));?>
+                    <td class="task__date"><?=$date;?></td>
                     <td class="task__controls"></td>
                 </tr>
                 <?php }; ?>

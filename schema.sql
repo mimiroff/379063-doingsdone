@@ -23,6 +23,7 @@ CREATE TABLE `tasks` (
   `start_date` DATETIME NOT NULL,
   `end_date` DATETIME,
   `task_name` VARCHAR(255) NOT NULL,
+  `file_name` VARCHAR(255),
   `file_path` VARCHAR(255),
   `deadline` DATETIME,
   `author_id` INT UNSIGNED NOT NULL,

@@ -187,3 +187,26 @@ function get_user_data_by_id ($link, int $user_id): array {
 
     return $user;
 };
+
+/**
+ * Валидация формата даты и времени
+ *
+ * @param string $date Проверяемая строка, содержащая дату и время
+ * @param string $format Формат, которому должна соответствовать строка
+ * @return bool Возвращает true, если строка даты и времени соответствует формату, и false - если не соответствует
+ */
+function validate_date (string $date, string $format = 'Y-m-d H:i'): bool {
+    $result = date_create_from_format($format, $date);
+    return $result ? true : false;
+};
+
+/**
+ * Валидация формата названия задачи
+ *
+ * @param string $task_name Проверяемое название
+ * @param string $pattern шаблон (регулярное выражение), которому должно соответствовать название
+ * @return bool Возвращает true, если название соответствует формату, и false - если не соответствует
+ */
+function validate_task_name (string $task_name, string $pattern = '/\S/'): bool {
+    return preg_match($pattern, $task_name) === 1 ? true : false;
+};
