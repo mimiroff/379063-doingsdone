@@ -2,18 +2,11 @@
 
 require_once 'functions.php';
 require_once 'data.php';
+require_once 'init.php';
 
-$link = mysqli_connect('localhost', 'root', '', 'doingsdone-379063');
-
-if(!$link) {
-    print('Ошибка подключения: ' . mysqli_connect_error());
-}
-
-mysqli_set_charset($link, 'utf8');
-
-$user_id = 1;
-$user = get_user_data_by_id($link, $user_id);
 $is_error = false;
+//$user_id = 1;
+//$user = get_user_data_by_id($link, $user_id);
 $project_id = 0;
 
 $required_task = ['name', 'project'];
@@ -25,7 +18,7 @@ $errors_messages = ['name' => 'Укажите название задачи',
     'check_project' => 'Выбран несуществующий проект',
     'validate_date' => 'Укажите срок выполнения в правильном формате: ГГГГ-ММ-ДД ЧЧ:ММ'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($user)) {
     $modal_task = renderTemplate(
         './templates/modal-task.php',
         [
@@ -64,6 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         print('Error! Status: ' . http_response_code());
         exit;
     }
+} elseif ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($user)) {
+    header('Location: /guest.php');
+    exit;
 } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $new_task = $_POST;
 
