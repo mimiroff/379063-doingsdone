@@ -16,10 +16,10 @@
 <div class="page-wrapper">
     <div class="container container--with-sidebar">
         <header class="main-header">
-            <a href="#">
+            <a href="index.php">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
-            <?php if (isset($user)) : ?>
+            <?php if (isset($user)): ?>
             <div class="main-header__side">
                 <a class="main-header__side-item button button--plus open-modal" href="javascript:;"
                    target="task_add">Добавить задачу</a>
@@ -32,10 +32,15 @@
                     <div class="user-menu__data">
                         <p><?=htmlspecialchars($user['name']);?></p>
 
-                        <a href="#">Выйти</a>
+                        <a href="logout.php">Выйти</a>
                     </div>
                 </div>
             </div>
+            <?php else:?>
+                <div class="main-header__side">
+                    <a class="main-header__side-item button button--transparent open-modal"  href="javascript:;"
+                       target="user_login">Войти</a>
+                </div>
             <?php endif;?>
         </header>
 
@@ -81,8 +86,11 @@
                 </div>
             </div>
         </footer>
-        <?php if (isset($modal_task)) :?>
+        <?php if (isset($modal_task)):?>
         <?=$modal_task;?>
+        <?php endif;?>
+        <?php if (isset($modal_auth)):?>
+        <?=$modal_auth;?>
         <?php endif;?>
         <script src="flatpickr.js"></script>
         <script src="script.js"></script>

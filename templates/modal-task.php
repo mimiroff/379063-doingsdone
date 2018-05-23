@@ -5,7 +5,7 @@
 
   <h2 class="modal__heading">Добавление задачи</h2>
 
-  <form class="form"  action="index.php" method="post" enctype="multipart/form-data">
+  <form class="form"  action="add-task.php" method="post" enctype="multipart/form-data">
     <div class="form__row">
       <label class="form__label" for="name">Название <sup>*</sup></label>
       <?php $class_name = isset($errors['name']) ? 'form__input--error' : '';
