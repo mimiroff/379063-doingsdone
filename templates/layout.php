@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<?php $class_name = $is_error ? 'overlay' : '';?>
+<?php $class_name = (isset($is_error) && $is_error) ? 'overlay' : '';?>
 <body class="<?=$class_name;?>">
 <h1 class="visually-hidden">Дела в порядке</h1>
 
@@ -19,7 +19,7 @@
             <a href="#">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
-
+            <?php if (isset($user)) : ?>
             <div class="main-header__side">
                 <a class="main-header__side-item button button--plus open-modal" href="javascript:;"
                    target="task_add">Добавить задачу</a>
@@ -36,6 +36,7 @@
                     </div>
                 </div>
             </div>
+            <?php endif;?>
         </header>
 
         <?=$content;?>
@@ -47,9 +48,10 @@
 
                     <p>Веб-приложение для удобного ведения списка дел.</p>
                 </div>
-
+                <?php if (isset($user)) : ?>
                 <a class="main-footer__button button button--plus open-modal" target="task_add"
                    href="javascript:;">Добавить задачу</a>
+                <?php endif;?>
 
                 <div class="main-footer__social social">
                     <span class="visually-hidden">Мы в соцсетях:</span>
@@ -79,7 +81,9 @@
                 </div>
             </div>
         </footer>
+        <?php if (isset($modal_task)) :?>
         <?=$modal_task;?>
+        <?php endif;?>
         <script src="flatpickr.js"></script>
         <script src="script.js"></script>
 </body>

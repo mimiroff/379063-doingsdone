@@ -210,3 +210,35 @@ function validate_date (string $date, string $format = 'Y-m-d H:i'): bool {
 function validate_task_name (string $task_name, string $pattern = '/\S/'): bool {
     return preg_match($pattern, $task_name) === 1 ? true : false;
 };
+
+/**
+ * Валидация адреса электронной почты
+ *
+ * @param string $email проверяемый адрес электронной почты
+ * @return bool Возвращает true, если адрес верный, и false если - нет
+ */
+function validate_email(string $email): bool {
+    return filter_var($email, FILTER_VALIDATE_EMAIL);
+};
+
+/**
+ * Проверка наличия адреса электронной почты в БД
+ *
+ * @param $link Соединение с БД
+ * @param string $email проверяемый адрес электронной почты
+ * @return bool Возвращает true, если адрес не найден, и false если - найден
+ */
+
+function check_email($link, string $email): bool {
+    $sql = 'SELECT * FROM `users` WHERE `email` = "' .$email.'"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return empty($rows) ? true : false;
+};
