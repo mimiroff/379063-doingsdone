@@ -264,3 +264,48 @@ function search_user_by_email($link, string $email): array {
 
     return $user;
 };
+
+/**
+ * Проверка наличия в БД у пользователя проекта по его названию
+ *
+ * @param $link соединение с БД
+ * @param string $project_name Название проекта
+ * @param int $user_id номер id пользователя
+ * @return bool Возвращает true, если проект не найден, и false - если найден
+ */
+function check_project_name ($link, string $project_name, int $user_id): bool {
+    $sql = 'SELECT * FROM `projects` WHERE `project_name` = "' . $project_name . '" AND `user_id`= "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return empty($rows) ? true : false;
+};
+
+/**
+ * Выбор проекта по названию
+ *
+ * @param $link соединение с БД
+ * @param string $project_name Название проекта
+ * @param int $user_id номер id пользователя
+ * @return array Возвращает массив данных выбранного проекта
+ */
+function get_project_by_name ($link, string $project_name, int $user_id): array {
+    $sql = $sql = 'SELECT * FROM `projects` WHERE `project_name` = "' . $project_name . '" AND `user_id`= "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $project = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $project = $project[0];
+
+    return $project;
+};

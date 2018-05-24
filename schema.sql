@@ -33,7 +33,7 @@ CREATE TABLE `tasks` (
 );
 
 CREATE UNIQUE INDEX email ON `users`(`email`);
-CREATE UNIQUE INDEX project ON `projects`(`project_name`);
+CREATE INDEX project ON `projects`(`project_name`);
 CREATE INDEX t_name ON `tasks`(`task_name`);
 CREATE INDEX s_date ON `tasks`(`start_date`);
 CREATE INDEX d_line ON `tasks`(`deadline`);

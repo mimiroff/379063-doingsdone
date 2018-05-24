@@ -89,6 +89,7 @@ if (!$user || $_SERVER['REQUEST_METHOD'] == 'GET') {
         mysqli_error($link);
 
         $project_id = 0;
+
         $page_content = renderTemplate(
             './templates/index.php',
             [

@@ -92,6 +92,9 @@
         <?php if (isset($modal_auth)):?>
         <?=$modal_auth;?>
         <?php endif;?>
+        <?php if (isset($modal_project)):?>
+        <?=$modal_project;?>
+        <?php endif;?>
         <script src="flatpickr.js"></script>
         <script src="script.js"></script>
 </body>

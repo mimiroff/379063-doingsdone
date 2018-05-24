@@ -13,21 +13,16 @@ $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 $is_error = false;
 $project_id = 0;
 
-$required_task = ['name', 'project'];
-$errors = [];
-$rules = ['date' => 'validate_date', 'project' => 'check_project', 'name' => 'validate_task_name'];
-$errors_messages = ['name' => 'Укажите название задачи',
-    'project' => 'Укажите проект',
-    'validate_task_name' => 'Укажите название задачи',
-    'check_project' => 'Выбран несуществующий проект',
-    'validate_date' => 'Укажите срок выполнения в правильном формате: ГГГГ-ММ-ДД ЧЧ:ММ'];
-
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($user)) {
     $modal_task = renderTemplate(
         './templates/modal-task.php',
         [
             'projects' => get_projects_by_user($link, $user['id'])
         ]
+    );
+    $modal_project = renderTemplate(
+        './templates/modal-project.php',
+        []
     );
     if (!empty($_GET['id']) && check_project($link, $_GET['id'], $user['id'])) {
         $project_id = $_GET['id'];
@@ -73,6 +68,7 @@ $layout_content = renderTemplate(
         'content' => $page_content,
         'user' => $user,
         'modal_task' => $modal_task,
+        'modal_project' => $modal_project,
         'is_error' => $is_error
     ]
 );
