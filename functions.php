@@ -228,7 +228,6 @@ function validate_email(string $email): bool {
  * @param string $email проверяемый адрес электронной почты
  * @return bool Возвращает true, если адрес не найден, и false если - найден
  */
-
 function check_email($link, string $email): bool {
     $sql = 'SELECT * FROM `users` WHERE `email` = "' .$email.'"';
     $result = mysqli_query($link, $sql);
@@ -241,4 +240,27 @@ function check_email($link, string $email): bool {
     $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return empty($rows) ? true : false;
+};
+
+/**
+ * Поиск пользователя по email
+ *
+ * @param $link соединение с БД
+ * @param string $email электронный адрес пользователя
+ * @return array возвращает массив данных пользователя в случае успеха, и пустой массив в случае отсутствия переданного
+ * email в БД
+ */
+function search_user_by_email($link, string $email): array {
+    $sql = 'SELECT * FROM `users` WHERE `email` = "' .$email.'"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $user = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $user = empty($user) ? $user : $user[0];
+
+    return $user;
 };
