@@ -1,4 +1,4 @@
-<?php $hidden_attr = isset($errors) ? '' : 'hidden';?>
+<?php $hidden_attr = !empty($errors) ? '' : 'hidden';?>
 
 <div class="modal" <?=$hidden_attr;?> id="project_add">
     <button class="modal__close" type="button" name="button">Закрыть</button>
@@ -15,7 +15,7 @@
         </div>
 
         <div class="form__row form__row--controls">
-            <?php if (isset($errors)):?>
+            <?php if (!empty($errors)):?>
                 <p class="error-message">Пожалуйста, исправьте ошибки в форме</p>
             <?php endif;?>
             <input class="button" type="submit" name="" value="Добавить">

@@ -133,6 +133,7 @@ function get_tasks_by_project ($link, int $project_id): array {
  * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
  */
 function get_inbox_tasks_by_user ($link, int $user_id): array {
+
     $sql = 'SELECT * FROM `tasks` WHERE `author_id` = "' . $user_id . '" AND `project_id` IS NULL';
     $result = mysqli_query($link, $sql);
 
@@ -309,3 +310,19 @@ function get_project_by_name ($link, string $project_name, int $user_id): array 
 
     return $project;
 };
+
+function get_task_by_id ($link, int $task_id): array {
+    $sql = 'SELECT * FROM `tasks` WHERE `id` = "' . $task_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $task = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $task = $task[0];
+
+    return $task;
+};
+

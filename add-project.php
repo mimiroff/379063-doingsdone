@@ -1,7 +1,6 @@
 <?php
 require_once 'functions.php';
 require_once 'init.php';
-require_once 'data.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -9,11 +8,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 
-$is_error = false;
-$project_id = 0;
+$project_id = isset($_SESSION['project_id']) ? (int)$_SESSION['project_id'] : 0;
 
 $required = ['name'];
 $errors = [];
+$_SESSION['project_errors'] = $errors;
 $rules = ['name' => 'check_project_name'];
 $errors_messages = ['name' => 'Укажите название проекта',
     'check_project_name' => 'Данный проект уже существует'];
@@ -38,27 +37,11 @@ if (!$user || $_SERVER['REQUEST_METHOD'] == 'GET') {
         }
     }
 
-    if ($errors) {
-        $is_error = true;
-        $page_content = renderTemplate(
-            './templates/index.php',
-            [
-                'projects' => get_projects_by_user($link, $user['id']),
-                'tasks' => get_inbox_tasks_by_user($link, $user['id']),
-                'show_complete_tasks' => $show_complete_tasks,
-                'link' => $link,
-                'active' => $project_id,
-                'user' => $user
-            ]
-        );
-        $modal_project = renderTemplate(
-            './templates/modal-project.php',
-            [
-                'errors' => $errors
-            ]
-        );
+    if (!empty($errors)) {
+        $_SESSION['project_errors'] = $errors;
+        header('Location: /index.php?error=true');
+        exit;
     } else {
-
         $project_name = $new_project['name'];
         $user_id = $user['id'];
 
@@ -70,32 +53,8 @@ if (!$user || $_SERVER['REQUEST_METHOD'] == 'GET') {
 
         $project = get_project_by_name($link, $project_name, $user_id);
         $project_id = $project['id'];
-        $page_content = renderTemplate(
-            './templates/index.php',
-            [
-                'projects' => get_projects_by_user($link, $user['id']),
-                'tasks' => get_inbox_tasks_by_user($link, $user['id']),
-                'show_complete_tasks' => $show_complete_tasks,
-                'link' => $link,
-                'active' => $project_id,
-                'user' => $user
-            ]
-        );
-
-        $modal_project = renderTemplate(
-            './templates/modal-project.php',
-            []
-        );
+        $_SESSION['project_errors'] = [];
+        header('Location: /index.php?id=' . $project_id . '');
+        exit;
     }
-    $layout_content = renderTemplate(
-        './templates/layout.php',
-        [
-            'title' => 'Дела в порядке',
-            'content' => $page_content,
-            'user' => $user,
-            'modal_project' => $modal_project,
-            'is_error' => $is_error
-        ]
-    );
-    print ($layout_content);
 }

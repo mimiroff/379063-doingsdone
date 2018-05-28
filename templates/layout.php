@@ -16,7 +16,7 @@
 <div class="page-wrapper">
     <div class="container container--with-sidebar">
         <header class="main-header">
-            <a href="index.php">
+            <a href="index.php?id=0">
                 <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
             </a>
             <?php if (isset($user)): ?>
