@@ -73,7 +73,7 @@ function count_deadline (string $deadline, int $mark): bool {
     if (is_int($deadline_ts)) {
         $now = time();
         $time_delta = $deadline_ts - $now;
-        if ($time_delta < $mark) {
+        if ($time_delta <= $mark) {
             return true;
         } else {
             return false;

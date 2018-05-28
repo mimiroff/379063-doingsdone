@@ -51,7 +51,7 @@
             <?php foreach ($tasks as $task) {
                 $class_name = $task['end_date'] ? 'tasks__item task task--completed' : 'tasks__item task';
                 $hidden = ($show_complete_tasks == 0 && $task['end_date']) ? 'style="display: none;}"' : '';
-                $important = ($task['deadline'] == null) ? '' : (count_deadline($task['deadline'], 3600)) ? 'task--important' : '';
+                $important = ($task['deadline'] == null) ? '' : (count_deadline($task['deadline'], 86400)) ? 'task--important' : '';
                 $checked = $task['end_date'] ? 'checked' : '';
                 ?>
                 <tr class="<?=$class_name;?> <?=$important;?>" <?=$hidden;?>>
