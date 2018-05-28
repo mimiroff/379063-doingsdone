@@ -85,7 +85,9 @@ if ($user) {
             mysqli_stmt_execute($stmt);
             mysqli_error($link);
 
-            header('Location: /guest.php');
+            $user = search_user_by_email($link, $email);
+            $_SESSION['user'] = $user;
+            header('Location: /index.php');
             exit;
         }
     }

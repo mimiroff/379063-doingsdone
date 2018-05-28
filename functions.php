@@ -73,7 +73,7 @@ function count_deadline (string $deadline, int $mark): bool {
     if (is_int($deadline_ts)) {
         $now = time();
         $time_delta = $deadline_ts - $now;
-        if ($time_delta < $mark) {
+        if ($time_delta <= $mark) {
             return true;
         } else {
             return false;
@@ -133,6 +133,7 @@ function get_tasks_by_project ($link, int $project_id): array {
  * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
  */
 function get_inbox_tasks_by_user ($link, int $user_id): array {
+
     $sql = 'SELECT * FROM `tasks` WHERE `author_id` = "' . $user_id . '" AND `project_id` IS NULL';
     $result = mysqli_query($link, $sql);
 
@@ -264,3 +265,64 @@ function search_user_by_email($link, string $email): array {
 
     return $user;
 };
+
+/**
+ * Проверка наличия в БД у пользователя проекта по его названию
+ *
+ * @param $link соединение с БД
+ * @param string $project_name Название проекта
+ * @param int $user_id номер id пользователя
+ * @return bool Возвращает true, если проект не найден, и false - если найден
+ */
+function check_project_name ($link, string $project_name, int $user_id): bool {
+    $sql = 'SELECT * FROM `projects` WHERE `project_name` = "' . $project_name . '" AND `user_id`= "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $rows = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return empty($rows) ? true : false;
+};
+
+/**
+ * Выбор проекта по названию
+ *
+ * @param $link соединение с БД
+ * @param string $project_name Название проекта
+ * @param int $user_id номер id пользователя
+ * @return array Возвращает массив данных выбранного проекта
+ */
+function get_project_by_name ($link, string $project_name, int $user_id): array {
+    $sql = $sql = 'SELECT * FROM `projects` WHERE `project_name` = "' . $project_name . '" AND `user_id`= "' . $user_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $project = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $project = $project[0];
+
+    return $project;
+};
+
+function get_task_by_id ($link, int $task_id): array {
+    $sql = 'SELECT * FROM `tasks` WHERE `id` = "' . $task_id . '"';
+    $result = mysqli_query($link, $sql);
+
+    if(!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $task = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $task = $task[0];
+
+    return $task;
+};
+

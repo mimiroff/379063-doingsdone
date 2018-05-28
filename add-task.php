@@ -1,7 +1,6 @@
 <?php
 require_once 'functions.php';
 require_once 'init.php';
-require_once 'data.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
@@ -9,11 +8,11 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 $user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
 
-$is_error = false;
-$project_id = 0;
+$project_id = isset($_SESSION['project_id']) ? (int)$_SESSION['project_id'] : 0;
 
 $required_task = ['name', 'project'];
 $errors = [];
+$_SESSION['task_errors'] = $errors;
 $rules = ['date' => 'validate_date', 'project' => 'check_project', 'name' => 'validate_task_name'];
 $errors_messages = ['name' => 'Укажите название задачи',
     'project' => 'Укажите проект',
@@ -49,26 +48,10 @@ if (!$user || $_SERVER['REQUEST_METHOD'] == 'GET') {
         }
     }
 
-    if ($errors) {
-        $is_error = true;
-        $page_content = renderTemplate(
-            './templates/index.php',
-            [
-                'projects' => get_projects_by_user($link, $user['id']),
-                'tasks' => get_inbox_tasks_by_user($link, $user['id']),
-                'show_complete_tasks' => $show_complete_tasks,
-                'link' => $link,
-                'active' => $project_id,
-                'user' => $user
-            ]
-        );
-        $modal_task = renderTemplate(
-            './templates/modal-task.php',
-            [
-                'projects' => get_projects_by_user($link, $user['id']),
-                'errors' => $errors
-            ]
-        );
+    if (!empty($errors)) {
+        $_SESSION['task_errors'] = $errors;
+        header('Location: /index.php?error=true');
+        exit;
     } else {
         if (is_uploaded_file($_FILES['preview']['tmp_name'])) {
             $file_name = $_FILES['preview']['name'];
@@ -88,35 +71,9 @@ if (!$user || $_SERVER['REQUEST_METHOD'] == 'GET') {
         mysqli_stmt_execute($stmt);
         mysqli_error($link);
 
-        $project_id = 0;
-        $page_content = renderTemplate(
-            './templates/index.php',
-            [
-                'projects' => get_projects_by_user($link, $user['id']),
-                'tasks' => get_inbox_tasks_by_user($link, $user['id']),
-                'show_complete_tasks' => $show_complete_tasks,
-                'link' => $link,
-                'active' => $project_id,
-                'user' => $user
-            ]
-        );
-
-        $modal_task = renderTemplate(
-            './templates/modal-task.php',
-            [
-                'projects' => get_projects_by_user($link, $user['id'])
-            ]
-        );
+        $project_id = $project_id ? $project_id : 0;
+        $_SESSION['task_errors'] = [];
+        header('Location: /index.php?id=' . $project_id . '');
+        exit;
     }
-    $layout_content = renderTemplate(
-        './templates/layout.php',
-        [
-            'title' => 'Дела в порядке',
-            'content' => $page_content,
-            'user' => $user,
-            'modal_task' => $modal_task,
-            'is_error' => $is_error
-        ]
-    );
-    print ($layout_content);
 }

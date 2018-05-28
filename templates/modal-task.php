@@ -1,4 +1,4 @@
-<?php $hidden_attr = isset($errors) ? '' : 'hidden';?>
+<?php $hidden_attr = !empty($errors) ? '' : 'hidden';?>
 
 <div class="modal" <?=$hidden_attr;?> id="task_add">
   <button class="modal__close" type="button" name="button" href="/">Закрыть</button>
@@ -52,6 +52,6 @@
       <input class="button" type="submit" name="" value="Добавить">
     </div>
   </form>
-    <?php $error_message = isset($errors) ? 'Пожалуйста, исправьте ошибки в форме' : '';?>
+    <?php $error_message = !empty($errors) ? 'Пожалуйста, исправьте ошибки в форме' : '';?>
     <p class="form__message"><?=$error_message;?></p>
 </div>

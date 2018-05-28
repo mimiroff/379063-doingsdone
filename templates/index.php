@@ -6,7 +6,7 @@
             <ul class="main-navigation__list">
                 <?php $class_name = ($active == 0) ? 'main-navigation__list-item  main-navigation__list-item--active' : 'main-navigation__list-item';?>
                 <li class="<?=$class_name;?>">
-                    <a class="main-navigation__list-item-link" href="index.php">Входящие</a>
+                    <a class="main-navigation__list-item-link" href="index.php?id=0">Входящие</a>
                     <span class="main-navigation__list-item-count"><?=count_inbox_tasks_by_user($link, $user['id'])?></span>
                 </li>
                 <?php foreach($projects as $project) {
@@ -34,10 +34,10 @@
 
         <div class="tasks-controls">
             <nav class="tasks-switch">
-                <a href="/" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-                <a href="/" class="tasks-switch__item">Повестка дня</a>
-                <a href="/" class="tasks-switch__item">Завтра</a>
-                <a href="/" class="tasks-switch__item">Просроченные</a>
+                <?php foreach($filters as $counter => $filter) {
+                $class_name = ($active_filter == $counter) ? 'tasks-switch__item tasks-switch__item--active' : 'tasks-switch__item';?>
+                <a href="index.php?filter=<?=$counter;?>" class="<?=$class_name;?>"><?=$filter;?></a>
+                <?php }; ?>
             </nav>
 
             <label class="checkbox">
@@ -51,12 +51,13 @@
             <?php foreach ($tasks as $task) {
                 $class_name = $task['end_date'] ? 'tasks__item task task--completed' : 'tasks__item task';
                 $hidden = ($show_complete_tasks == 0 && $task['end_date']) ? 'style="display: none;}"' : '';
-                $important = ($task['deadline'] == null) ? '' : (count_deadline($task['deadline'], 3600)) ? 'task--important' : '';
+                $important = ($task['deadline'] == null) ? '' : (count_deadline($task['deadline'], 86400)) ? 'task--important' : '';
+                $checked = $task['end_date'] ? 'checked' : '';
                 ?>
                 <tr class="<?=$class_name;?> <?=$important;?>" <?=$hidden;?>>
                     <td class="task__select">
                         <label class="checkbox task__checkbox">
-                            <input class="checkbox__input visually-hidden task__checkbox" type="checkbox" value="1">
+                            <input class="checkbox__input visually-hidden task__checkbox" <?=$checked;?> type="checkbox" value="<?=$task['id'];?>">
                             <span class="checkbox__text"><?=htmlspecialchars(strip_tags($task['task_name']));?></span>
                         </label>
                     </td>
