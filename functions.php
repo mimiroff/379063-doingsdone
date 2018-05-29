@@ -387,8 +387,14 @@ function get_task_by_id ($link, int $task_id): array {
     return $task;
 };
 
-function search_tasks_by_name ($link, string $task_name): array {
-    $sql = 'SELECT * FROM `tasks` WHERE MATCH (`task_name`) AGAINST(? IN BOOLEAN MODE)';
+function search_tasks_by_name ($link, string $task_name): array
+{
+    if (strlen($task_name) < 3) {
+        $sql = 'SELECT * FROM `tasks` WHERE `task_name` LIKE ?';
+        $task_name = '%' . $task_name . '%';
+    } else {
+        $sql = 'SELECT * FROM `tasks` WHERE MATCH(`task_name`) AGAINST(? IN NATURAL LANGUAGE MODE)';
+    }
 
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt, 's', $task_name);
