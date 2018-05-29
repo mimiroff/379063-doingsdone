@@ -386,3 +386,22 @@ function get_task_by_id ($link, int $task_id): array {
 
     return $task;
 };
+
+function search_tasks_by_name ($link, string $task_name): array {
+    $sql = 'SELECT * FROM `tasks` WHERE MATCH (`task_name`) AGAINST(? IN BOOLEAN MODE)';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $task_name);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
+
+    if (!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    return $tasks;
+};

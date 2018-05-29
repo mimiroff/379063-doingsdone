@@ -17,6 +17,7 @@ $active_filter = isset($_SESSION['active_filter']) ? (int)$_SESSION['active_filt
 $project_errors = [];
 $task_errors = [];
 $is_error = false;
+$search_message = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($user)) {
     $tasks = [];
@@ -134,6 +135,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($user)) {
         }
         $tasks = $filtered_tasks;
     }
+
+    if (isset($_GET['search'])) {
+        $request = $_GET['search'];
+        $tasks = search_tasks_by_name($link, $request);
+
+        if(empty($tasks)) {
+            $search_message = 'Ничего не найдено по вашему запросу';
+        }
+    }
+
     $page_content = renderTemplate(
         './templates/index.php',
         [
@@ -144,7 +155,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($user)) {
             'active' => $project_id,
             'user' => $user,
             'filters' => $FILTERS,
-            'active_filter' => $active_filter
+            'active_filter' => $active_filter,
+            'search_message' => $search_message
         ]
     );
 } elseif ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($user)) {
