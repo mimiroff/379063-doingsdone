@@ -2,6 +2,7 @@
 
 require_once 'functions.php';
 require_once 'init.php';
+require_once 'vendor/autoload.php';
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();

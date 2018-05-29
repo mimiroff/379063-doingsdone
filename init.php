@@ -4,6 +4,7 @@
  */
 
 require_once 'functions.php';
+require_once 'vendor/autoload.php';
 
 $link = mysqli_connect('localhost', 'root', '', 'doingsdone-379063');
 
