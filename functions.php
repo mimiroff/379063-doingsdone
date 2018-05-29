@@ -25,16 +25,20 @@ function renderTemplate (string $template_path, array $data): string {
  * @return int Количество задач
  */
 function count_tasks_by_project ($link, int $project_id): int {
-    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $project_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_store_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
         print('Ошибка MySQL: ' . $error);
     }
 
-    $records_count = mysqli_num_rows($result);
-
+    $records_count = mysqli_stmt_num_rows($stmt);
     return $records_count;
 };
 
@@ -47,17 +51,21 @@ function count_tasks_by_project ($link, int $project_id): int {
  */
 function count_inbox_tasks_by_user ($link, int $user_id): int {
 
-    $sql = 'SELECT COUNT(*) FROM `tasks` WHERE `author_id` = "' . $user_id . '" AND `project_id` IS NULL';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `tasks` WHERE `author_id` = ? AND `project_id` IS NULL';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_store_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
         print('Ошибка MySQL: ' . $error);
     }
 
-    $count = mysqli_fetch_row($result);
-
-    return (int) $count[0];
+    $records_count = mysqli_stmt_num_rows($stmt);
+    return $records_count;
 };
 
 /**
@@ -91,16 +99,19 @@ function count_deadline (string $deadline, int $mark): bool {
  * @return array Возвращает двумерный массив ассоциативных массивов с данными проектов
  */
 function get_projects_by_user ($link, int $user_id): array {
-    $sql = 'SELECT * FROM `projects` WHERE `user_id` = "' . $user_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `projects` WHERE `user_id` = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
         print('Ошибка MySQL: ' . $error);
     }
-
     $projects = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
     return $projects;
 }
 
@@ -112,8 +123,13 @@ function get_projects_by_user ($link, int $user_id): array {
  * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
  */
 function get_tasks_by_project ($link, int $project_id): array {
-    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = "' . $project_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `tasks` WHERE `project_id` = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $project_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -133,9 +149,13 @@ function get_tasks_by_project ($link, int $project_id): array {
  * @return array Возвращает двумерный массив ассоциативных массивов с данными задач
  */
 function get_inbox_tasks_by_user ($link, int $user_id): array {
+    $sql = 'SELECT * FROM `tasks` WHERE `author_id` = ? AND `project_id` IS NULL';
 
-    $sql = 'SELECT * FROM `tasks` WHERE `author_id` = "' . $user_id . '" AND `project_id` IS NULL';
-    $result = mysqli_query($link, $sql);
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -156,8 +176,13 @@ function get_inbox_tasks_by_user ($link, int $user_id): array {
  * @return bool возвращает true, если проект найден, возвращает false, если проект не найден
  */
 function check_project ($link, int $project_id, int $user_id): bool {
-    $sql = 'SELECT * FROM `projects` WHERE `id` = "' . $project_id . '" AND `user_id`= "' . $user_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `projects` WHERE `id` = ? AND `user_id`= ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'ii', $project_id, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -175,8 +200,13 @@ function check_project ($link, int $project_id, int $user_id): bool {
  * @return array Возвращает ассоциативный массив с данными пользователя
  */
 function get_user_data_by_id ($link, int $user_id): array {
-    $sql = 'SELECT * FROM `users` WHERE `id` = "' . $user_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `users` WHERE `id` = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i',  $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -230,8 +260,13 @@ function validate_email(string $email): bool {
  * @return bool Возвращает true, если адрес не найден, и false если - найден
  */
 function check_email($link, string $email): bool {
-    $sql = 'SELECT * FROM `users` WHERE `email` = "' .$email.'"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `users` WHERE `email` = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 's',  $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -252,8 +287,13 @@ function check_email($link, string $email): bool {
  * email в БД
  */
 function search_user_by_email($link, string $email): array {
-    $sql = 'SELECT * FROM `users` WHERE `email` = "' .$email.'"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `users` WHERE `email` = ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 's', $email);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -275,8 +315,13 @@ function search_user_by_email($link, string $email): array {
  * @return bool Возвращает true, если проект не найден, и false - если найден
  */
 function check_project_name ($link, string $project_name, int $user_id): bool {
-    $sql = 'SELECT * FROM `projects` WHERE `project_name` = "' . $project_name . '" AND `user_id`= "' . $user_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `projects` WHERE `project_name` = ? AND `user_id`= ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'si', $project_name, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -297,8 +342,13 @@ function check_project_name ($link, string $project_name, int $user_id): bool {
  * @return array Возвращает массив данных выбранного проекта
  */
 function get_project_by_name ($link, string $project_name, int $user_id): array {
-    $sql = $sql = 'SELECT * FROM `projects` WHERE `project_name` = "' . $project_name . '" AND `user_id`= "' . $user_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = $sql = 'SELECT * FROM `projects` WHERE `project_name` = ? AND `user_id`= ?';
+
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'si', $project_name, $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -311,9 +361,20 @@ function get_project_by_name ($link, string $project_name, int $user_id): array 
     return $project;
 };
 
+/**
+ * Получает данные задачи по ее id
+ *
+ * @param $link соединение с БД
+ * @param int $task_id номер id задачи
+ * @return array Возвращает массив с данными задачи
+ */
 function get_task_by_id ($link, int $task_id): array {
-    $sql = 'SELECT * FROM `tasks` WHERE `id` = "' . $task_id . '"';
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM `tasks` WHERE `id` = ?';
+    $stmt = mysqli_prepare($link, $sql);
+    mysqli_stmt_bind_param($stmt, 'i', $task_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_error($link);
 
     if(!$result) {
         $error = mysqli_error($link);
@@ -325,4 +386,3 @@ function get_task_by_id ($link, int $task_id): array {
 
     return $task;
 };
-

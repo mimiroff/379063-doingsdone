@@ -67,6 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($user)) {
         ]
     );
 
+    $_SESSION['project_errors'] = [];
+    $_SESSION['task_errors'] = [];
+
     if (isset($_GET['id'])) {
         $project_id = $_GET['id'];
         $_SESSION['project_id'] = $project_id;
