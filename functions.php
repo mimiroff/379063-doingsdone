@@ -388,7 +388,12 @@ function get_task_by_id ($link, int $task_id): array {
 };
 
 function search_tasks_by_name ($link, string $task_name): array {
-    $sql = 'SELECT * FROM `tasks` WHERE MATCH (`task_name`) AGAINST(? IN BOOLEAN MODE)';
+    if(strlen($task_name) < 3) {
+        $sql = 'SELECT * FROM `tasks` WHERE `task_name` LIKE ?';
+        $task_name = '%' . $task_name . '%';
+    } else {
+        $sql = 'SELECT * FROM `tasks` WHERE MATCH(`task_name`) AGAINST(? IN NATURAL LANGUAGE MODE)';
+    }
 
     $stmt = mysqli_prepare($link, $sql);
     mysqli_stmt_bind_param($stmt, 's', $task_name);
@@ -404,4 +409,27 @@ function search_tasks_by_name ($link, string $task_name): array {
     $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return $tasks;
+};
+
+function get_hot_tasks ($link, int $hot_deadline): array {
+
+    $sql = 'SELECT t.task_name, t.deadline, u.name, u.email FROM tasks t LEFT JOIN users u ON t.author_id = u.id WHERE t.end_date IS NULL ';
+    $result = mysqli_query($link, $sql);
+
+    if (!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+    $now = time();
+    $hot_tasks = [];
+
+    foreach ($tasks as $task) {
+        if ($task['deadline'] != null && strtotime($task['deadline']) >= $now - $hot_deadline) {
+            $hot_tasks[] = $task;
+        }
+    }
+
+    return $hot_tasks;
 };
