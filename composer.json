@@ -1,0 +1,11 @@
+{
+    "name": "mimir/doingsdone",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Ilia Barashkov",
+            "email": "ibarashkov@list.ru"
+        }
+    ],
+    "require": {}
+}
