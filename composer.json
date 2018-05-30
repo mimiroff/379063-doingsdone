@@ -7,5 +7,7 @@
             "email": "ibarashkov@list.ru"
         }
     ],
-    "require": {}
+    "require": {
+        "swiftmailer/swiftmailer": "^6.0"
+    }
 }

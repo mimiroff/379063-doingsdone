@@ -388,7 +388,11 @@ function get_task_by_id ($link, int $task_id): array {
 };
 
 function search_tasks_by_name ($link, string $task_name): array {
+<<<<<<< HEAD
     if (strlen($task_name) < 3) {
+=======
+    if (strlen($task_name) < 3) {
+>>>>>>> module9-task2
         $sql = 'SELECT * FROM `tasks` WHERE `task_name` LIKE ?';
         $task_name = '%' . $task_name . '%';
     } else {
@@ -409,4 +413,36 @@ function search_tasks_by_name ($link, string $task_name): array {
     $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
 
     return $tasks;
+};
+
+/**
+ * Выборка задач с определенным сроклм выполнения
+ *
+ * @param $link соединение с БД
+ * @param int $hot_deadline максимальное каоличество секунд до срока выполнения задачи
+ * @return array возвращает ассоциативный массив с данными срочных задач (наименование и срок) и пользоваеля (email и имя)
+ */
+function get_hot_tasks ($link, int $hot_deadline): array {
+
+    $sql = 'SELECT t.task_name, t.deadline, u.name, u.email FROM tasks t LEFT JOIN users u ON t.author_id = u.id WHERE t.end_date IS NULL AND t.deadline IS NOT NULL';
+
+    $result = mysqli_query($link, $sql);
+
+    if (!$result) {
+        $error = mysqli_error($link);
+        print('Ошибка MySQL: ' . $error);
+    }
+
+    $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
+    $now = time();
+    $hot_tasks = [];
+
+    foreach ($tasks as $task) {
+        if (strtotime($task['deadline']) >= $now && strtotime($task['deadline']) - $now <= $hot_deadline) {
+            $hot_tasks[] = $task;
+        }
+    }
+
+    return $hot_tasks;
 };
