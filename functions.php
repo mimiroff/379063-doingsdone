@@ -413,7 +413,8 @@ function search_tasks_by_name ($link, string $task_name): array {
 
 function get_hot_tasks ($link, int $hot_deadline): array {
 
-    $sql = 'SELECT t.task_name, t.deadline, u.name, u.email FROM tasks t LEFT JOIN users u ON t.author_id = u.id WHERE t.end_date IS NULL ';
+    $sql = 'SELECT t.task_name, t.deadline, u.name, u.email FROM tasks t LEFT JOIN users u ON t.author_id = u.id WHERE t.end_date IS NULL AND t.deadline IS NOT NULL';
+
     $result = mysqli_query($link, $sql);
 
     if (!$result) {
@@ -422,11 +423,12 @@ function get_hot_tasks ($link, int $hot_deadline): array {
     }
 
     $tasks = mysqli_fetch_all($result, MYSQLI_ASSOC);
+
     $now = time();
     $hot_tasks = [];
 
     foreach ($tasks as $task) {
-        if ($task['deadline'] != null && strtotime($task['deadline']) >= $now - $hot_deadline) {
+        if (strtotime($task['deadline']) >= $now && strtotime($task['deadline']) - $now <= $hot_deadline) {
             $hot_tasks[] = $task;
         }
     }

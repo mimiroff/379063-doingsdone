@@ -14,7 +14,6 @@ $message->setFrom(	'keks@phpdemo.ru');
 $message->setContentType('text/plain');
 
 $hot_tasks = get_hot_tasks($link, 3600);
-var_dump($hot_tasks);
 
 foreach ($hot_tasks as $task) {
     $message->setTo($task['email']);
@@ -22,3 +21,6 @@ foreach ($hot_tasks as $task) {
                             $task['task_name'] . ' на ' . $task['deadline'] . '.');
     $mailer->send($message);
 };
+
+header('Location: /index.php');
+exit;
