@@ -18,6 +18,7 @@ var_dump($hot_tasks);
 
 foreach ($hot_tasks as $task) {
     $message->setTo($task['email']);
-    $message->setBody('Уважаемый(ая), ' . $task['name'] . '. У вас запланированна задача ' . $task['task_name'] . ' на ' . $task['deadline'] . '.');
+    $message->setBody('Уважаемый(ая), ' . $task['name'] . '. У вас запланированна задача ' .
+                            $task['task_name'] . ' на ' . $task['deadline'] . '.');
     $mailer->send($message);
 };
