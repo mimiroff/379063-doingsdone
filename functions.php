@@ -411,6 +411,13 @@ function search_tasks_by_name ($link, string $task_name): array {
     return $tasks;
 };
 
+/**
+ * Выборка задач с определенным сроклм выполнения
+ *
+ * @param $link соединение с БД
+ * @param int $hot_deadline максимальное каоличество секунд до срока выполнения задачи
+ * @return array возвращает ассоциативный массив с данными срочных задач (наименование и срок) и пользоваеля (email и имя)
+ */
 function get_hot_tasks ($link, int $hot_deadline): array {
 
     $sql = 'SELECT t.task_name, t.deadline, u.name, u.email FROM tasks t LEFT JOIN users u ON t.author_id = u.id WHERE t.end_date IS NULL AND t.deadline IS NOT NULL';
