@@ -387,12 +387,13 @@ function get_task_by_id ($link, int $task_id): array {
     return $task;
 };
 
+/**
+ * @param $link соединение с БД
+ * @param string $task_name наименование задачи
+ * @return array Возвращает массив с данными задач
+ */
 function search_tasks_by_name ($link, string $task_name): array {
-<<<<<<< HEAD
     if (strlen($task_name) < 3) {
-=======
-    if (strlen($task_name) < 3) {
->>>>>>> module9-task2
         $sql = 'SELECT * FROM `tasks` WHERE `task_name` LIKE ?';
         $task_name = '%' . $task_name . '%';
     } else {
