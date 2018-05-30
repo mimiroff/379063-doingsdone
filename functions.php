@@ -387,8 +387,7 @@ function get_task_by_id ($link, int $task_id): array {
     return $task;
 };
 
-function search_tasks_by_name ($link, string $task_name): array
-{
+function search_tasks_by_name ($link, string $task_name): array {
     if (strlen($task_name) < 3) {
         $sql = 'SELECT * FROM `tasks` WHERE `task_name` LIKE ?';
         $task_name = '%' . $task_name . '%';
